@@ -11,7 +11,10 @@ import firebase from 'firebase/app'
 import 'firebase/database'
 import { FirebaseConfig } from "./config/dev";
 
-require('dotenv').config()
+
+
+//ghpages/npm run deploy cant minify this, all breaks
+//require('dotenv').config()
 
 
 

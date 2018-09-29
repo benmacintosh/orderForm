@@ -2,7 +2,7 @@ import React,{ Component} from 'react';
 import ReactDOM from 'react-dom';
 import './App.css';
 import img from './img1.jpg'
-import img2 from './img2.png'
+import img2 from './img2.jpg'
 import {BrowserRouter as Router, Route,Link, HashRouter, Redirect} from "react-router-dom"
 
 import YouTube from 'react-youtube';
@@ -11,6 +11,7 @@ import firebase from 'firebase/app'
 import 'firebase/database'
 import { FirebaseConfig } from "./config/dev";
 
+import {withRouter} from 'react-router-dom'
 
 
 //ghpages/npm run deploy cant minify this, all breaks
@@ -29,10 +30,9 @@ class Bid extends Component{
             range: 10,
             final: 0,
             history: [],
-            templinks: [],
             accepted: 'false',
             value: 'make bid, accepted if above random minimum value, and have to change',
-            database: ''
+            downloadlink: "",
         }
 
         this.onInputClick = this.onInputClick.bind(this)
@@ -45,21 +45,6 @@ class Bid extends Component{
     componentDidMount(props){
         //so only once
         console.log("fff")
-        const db = firebase.initializeApp(FirebaseConfig).database().ref()
-        this.setState({database: db})
-
-
-
-
-        var thiskey = ""
-        var thisval = ""
-        db.orderByKey().limitToFirst(1).once('value', snapshot=> {
-            snapshot.forEach(singlesnap =>{
-                thiskey = singlesnap.key
-                thisval = singlesnap.val()
-                //db.child(thiskey).remove()
-            })
-        });
 
 
         //tostring
@@ -93,6 +78,34 @@ class Bid extends Component{
         var temphistory = this.state.history
         temphistory.push(currentval)
         this.setState({history: temphistory})
+
+
+        const db = firebase.initializeApp(FirebaseConfig).database().ref()
+
+        var thiskey = ""
+        var thisval = ""
+        console.log(db)
+        db.orderByKey().limitToFirst(1).once('value', snapshot=> {
+            snapshot.forEach(singlesnap =>{
+
+                console.log(singlesnap)
+                thiskey = singlesnap.key
+                thisval = singlesnap.val()
+
+                db.child(thiskey).remove()
+
+                console.log("thisval")
+                console.log(thisval)
+                this.setState({downloadlink:thisval})
+            })
+        });
+
+
+        ///HOW TO KEEP TRAKC AHPEPING LVIEI WHTOUT A SERVER,, doesnt need to be random,, just fetch this list from server,, and remove when it has been accessed
+        //this.props.history.push({thisval})
+        // <Redirect to = {thisval} />
+        // <a href = {thisval} style={{color:'blue'}}> {thisval}</a>
+        //FIREBASE SERVER, LINKS ACCESSED THEN REMOVED,, LINKS FROM MEDIAFIRE
 
     // this.state.database.on('child_added',snap => {
     //     console.log("database snap")
@@ -139,9 +152,16 @@ class Bid extends Component{
                 console.log('The payment was completed!');
 
 
-                ///HOW TO KEEP TRAKC AHPEPING LVIEI WHTOUT A SERVER,, doesnt need to be random,, just fetch this list from server,, and remove when it has been accessed
-                <Redirect to = {this.state.downloadlinks[Math.floor(Math.random()*this.state.downloadlinks.length)]} />
-                //FIREBASE SERVER, LINKS ACCESSED THEN REMOVED,, LINKS FROM MEDIAFIRE
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -168,7 +188,11 @@ class Bid extends Component{
                 return = {"dd"}
                 style={style}
                 onAuthorize={onAuthorize} />
+
+                <a href = {this.state.downloadlink} style={{color:'blue'}}> {this.state.downloadlink} </a>
         </div>
+
+
         );
     }
 };
@@ -177,39 +201,34 @@ class Bid extends Component{
 
 
 
-
-
+  //       <YouTube
+  // videoId={"3W7iv7Mw3Jw"}
+  // />  
 
 class App extends Component {
   render() {
     return (
       <div style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '100vh'}}>
 
-        <div>ben macintosh selected</div>
+        <div>songs for music macintosh archival documents (sonnets for cnn)</div>
+        <p>
+        1. I love watching the 2. evening parisian train 3. icecube paperweight 4. panther bear sticker 5. FLLINGLIKE66 6. harbour focus 7. mad rush (to see you) 8. small britney4 9. summer learn 10. why sit 11. my best mind 12. he was a friend of mine 13. henri can sit 14. pre syria 15. smile its miles 16. ok freestyle 17. tech III 18. comfortable, ALRIGHT 19. thanking you 20. patrolling from the sky 21. forgiven 4 reference 22. join the dance 23. mix2 24. after show lone 25. all fits 26. wishes both his eyes were glass 27. magnet research 28. the bad 29. waking jet-1 30. ice storm 31. fly to class 32. 90s info 33. tunnel3 34. intermission 35. supergirl 36. walking sideways 37. WHOS RESIDENCY 38. underwater sandstone 39. take out 40 40. not so well 41. talk to your friends 42. no heart hotel 43. daytime mind 44. blue dream fuck 45. in this bin 46. be nice 47. money on 48. new sadness 49. sample this 50. Emerson 974 51. restyourlove 52. digital water interlude 53. take your time 54. welldone 55. bea1 56. bwv106 57. Free melodys 58. globalised trees 59. sony freestyle 60. beautiful stairs 61. pop goes the weasal across the universe 62. walk5 63. WALK UP 64. skys 65. battle time 66. nocturne 67. small hand man sun 68. roville let go 69. now and again 70. greatnss
+        </p>ass
 
-        <img src={img2} alt="" width="88"/>
+        <p>
+        construction with sydney, friends, miles, henri, september
+        </p>
 
-        <div>
-
-        new precedence
-        </div>
-
-        <div>
-        <a href="https://google.com" style={{color:'blue'}}>google</a>
-        </div>
 
         <div>
         <Bid/>
         </div>
 
-        <p/>
+        <img src={img2} alt="" width="88"/>
 
-        <YouTube
-  videoId={"3W7iv7Mw3Jw"}
-  />  
-
-
-
+        <div>
+        <a href="https://www.youtube.com/watch?v=DfQXo7AUQKQ&t=396s" style={{color:'blue'}}>google</a>
+        </div>
 
 
 

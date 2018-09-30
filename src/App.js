@@ -72,7 +72,12 @@ class Bid extends Component{
             if(this.state.value>randvar){
                 this.setState({final:currentval, value: currentval+", accepted, pay then wait for download", accepted: 'true'})
                 console.log(this.state.final)
-            }
+            }else{
+            console.log("ggg")
+            this.setState({value: currentval+"try another value"})
+        }
+        }else{
+            this.setState({value: currentval+"already entered"})
         }
 
         var temphistory = this.state.history
@@ -217,7 +222,7 @@ class App extends Component {
         <img src={img2} alt="" width="88"/>
 
         <div>
-        <a href="https://www.youtube.com/watch?v=DfQXo7AUQKQ&t=396s" style={{color:'blue'}}>google</a>
+        <a href="https://www.youtube.com/watch?v=ql6JEBL1X88" style={{color:'blue'}}>https://www.youtube.com/watch?v=ql6JEBL1X88</a>
         </div>
 
 

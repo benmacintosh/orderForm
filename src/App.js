@@ -79,28 +79,6 @@ class Bid extends Component{
         temphistory.push(currentval)
         this.setState({history: temphistory})
 
-
-        const db = firebase.initializeApp(FirebaseConfig).database().ref()
-
-        var thiskey = ""
-        var thisval = ""
-        console.log(db)
-        db.orderByKey().limitToFirst(1).once('value', snapshot=> {
-            snapshot.forEach(singlesnap =>{
-
-                console.log(singlesnap)
-                thiskey = singlesnap.key
-                thisval = singlesnap.val()
-
-                db.child(thiskey).remove()
-
-                console.log("thisval")
-                console.log(thisval)
-                this.setState({downloadlink:thisval})
-            })
-        });
-
-
         ///HOW TO KEEP TRAKC AHPEPING LVIEI WHTOUT A SERVER,, doesnt need to be random,, just fetch this list from server,, and remove when it has been accessed
         //this.props.history.push({thisval})
         // <Redirect to = {thisval} />
@@ -112,6 +90,9 @@ class Bid extends Component{
     //     console.log(snap)
 
     // })
+
+
+
 }
 
     render(){
@@ -152,16 +133,25 @@ class Bid extends Component{
                 console.log('The payment was completed!');
 
 
+            const db = firebase.initializeApp(FirebaseConfig).database().ref()
 
+            var thiskey = ""
+            var thisval = ""
+            console.log(db)
+            db.orderByKey().limitToFirst(1).once('value', snapshot=> {
+                snapshot.forEach(singlesnap =>{
 
+                    console.log(singlesnap)
+                    thiskey = singlesnap.key
+                    thisval = singlesnap.val()
 
+                    db.child(thiskey).remove()
 
-
-
-
-
-
-
+                    console.log("thisval")
+                    console.log(thisval)
+                    this.setState({downloadlink:thisval})
+                })
+            });
 
 
 

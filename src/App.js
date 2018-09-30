@@ -70,7 +70,7 @@ class Bid extends Component{
             var randvar = Math.random()*(this.state.target)
             console.log(randvar)
             if(this.state.value>randvar){
-                this.setState({final:currentval, value: currentval+", accepted, pay then wait for download", accepted: 'true'})
+                this.setState({final:currentval, value: currentval+", accepted, pay then wait for 1 time download link", accepted: 'true'})
                 console.log(this.state.final)
             }else{
             console.log("ggg")
@@ -117,13 +117,17 @@ class Bid extends Component{
 
         // pass payment details
 
+
+
+
+
         let payment = (data,actions) => {
             return actions.payment.create({
                 transactions: [
                     {
                         amount: {
                             total:    this.state.final.toString(),
-                            currency: 'USD'
+                            currency: 'AUD'
                         }
                     }
                 ]
@@ -131,7 +135,8 @@ class Bid extends Component{
         };
 
 
-
+        var that = this
+        console.log(that.state)
 
         let onAuthorize = (data, actions) => {
             return actions.payment.execute().then(function(response) {
@@ -154,7 +159,7 @@ class Bid extends Component{
 
                     console.log("thisval")
                     console.log(thisval)
-                    this.setState({downloadlink:thisval})
+                    that.setState({downloadlink:thisval})
                 })
             });
 

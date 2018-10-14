@@ -1,8 +1,8 @@
 {
-  "name": "sfcnn",
+  "name": "orderForm",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://benmacintosh.github.io/sfcnn/",
+  "homepage": "https://benmacintosh.github.io/orderForm/",
   "dependencies": {
     "dotenv": "^6.0.0",
     "firebase": "^5.5.2",

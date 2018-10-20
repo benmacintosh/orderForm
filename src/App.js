@@ -21,7 +21,7 @@ class Form extends Component {
     constructor(props) {
         super(props);   
         this.state = {
-            number: "entering existing number will replace corresponding order",
+            number: "phone number (will replace existing order)",
             number_boolean: 0,
             notes: "notes",
             address: "enter address, (within ~5km of Newtown)",
@@ -209,24 +209,16 @@ class Form extends Component {
 
 
 
-
-
-//WORKING TO HERE
-
-
-
-
-
-
             //check this time is than difference between timedue of both points
             console.log("timed,  timetoeach")
             console.log(time_to_reach_new_point_from_nearest)
             var timediff_closest_andnewpoint = Math.abs((dbvals[mindex].data.time)-(that.state.time))
             if(timediff_closest_andnewpoint<time_to_reach_new_point_from_nearest){
                 that.setState({time_boolean: 1})
+            }else{
+                that.setState({time_boolean: 0})
+                alert('cant fit in delivery schedule, try another time')
             }
-
-
 
 
 
@@ -240,6 +232,8 @@ class Form extends Component {
                 db.ref(that.state.number).update({
                     data:that.state
                 });          
+            }else{
+                alert('couldnt submit, some values incorrect')
             }
 
 
@@ -343,15 +337,27 @@ class Form extends Component {
             return (
                 <div>
 
-                <input type = "text" name = "number" value = {this.state.number} onChange = {this.handleChange} onClick={this.onClick} />
-                <input type = "text" name = "notes" value = {this.state.notes} onChange = {this.handleChange} onClick={this.onClick} />
-                <input type = "text" id={66} name = "address" value = {this.state.address} onChange = {this.handleAddressChange} onClick={this.onClick} />
-                deliver by (subject to availability)
-                <input type = "text" name = "pay" value = {this.state.pay} onChange = {this.handleChange} onClick={this.onClick} />
+                <div>
+                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "number" value = {this.state.number} onChange = {this.handleNumberChange} onClick={this.onClick} />
+                </div>
+                <div>
+                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "notes" value = {this.state.notes} onChange = {this.handleChange} onClick={this.onClick} />
+                </div>
+                <div>
+                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" id={66} name = "address" value = {this.state.address} onChange = {this.handleAddressChange} onClick={this.onClick} />
+                </div>
+                <div>
+                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "time" value = {this.state.time} onChange = {this.handleTimeChange} />
+                deliver by (between 10-1, subject to schedule availability)
+                </div>
+                <div>
+                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "pay" value = {this.state.pay} onChange = {this.handleChange} onClick={this.onClick} />
+                </div>
 
                 <a onClick={this.onClickAuto1} style={{color:'blue', cursor: 'pointer', textDecorationLine: 'underline'}}>{this.state.paid[0]}</a>
                 <a>, </a>
                 <a onClick={this.onClickAuto2} style={{color:'blue', cursor: 'pointer', textDecorationLine: 'underline'}}>{this.state.paid[1]}</a>
+
 
 
                 <PayPalButton
@@ -375,18 +381,22 @@ class Form extends Component {
             return(
                 <div>
 
-                <input type = "text" name = "number" value = {this.state.number} onChange = {this.handleNumberChange} onClick={this.onClick} />
-                <input type = "text" name = "notes" value = {this.state.notes} onChange = {this.handleChange} onClick={this.onClick} />
-                <input type = "text" id={66} name = "address" value = {this.state.address} onChange = {this.handleAddressChange} onClick={this.onClick} />
-                deliver by (subject to availability)
-                <input type = "time" value = {this.state.time} onChange = {this.handleTimeChange} />
-                <input type = "text" name = "pay" value = {this.state.pay} onChange = {this.handleChange} onClick={this.onClick} />
-
-                <a onClick={this.onClickAuto1} style={{color:'blue', cursor: 'pointer', textDecorationLine: 'underline'}}>{this.state.paid[0]}</a>
-                <a>, </a>
-                <a onClick={this.onClickAuto2} style={{color:'blue', cursor: 'pointer', textDecorationLine: 'underline'}}>{this.state.paid[1]}</a>
-
-
+                <div>
+                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "number" value = {this.state.number} onChange = {this.handleNumberChange} onClick={this.onClick} />
+                </div>
+                <div>
+                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "notes" value = {this.state.notes} onChange = {this.handleChange} onClick={this.onClick} />
+                </div>
+                <div>
+                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" id={66} name = "address" value = {this.state.address} onChange = {this.handleAddressChange} onClick={this.onClick} />
+                </div>
+                <div>
+                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "time" value = {this.state.time} onChange = {this.handleTimeChange} />
+                deliver by (between 10-1, subject to schedule availability)
+                </div>
+                <div>
+                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "pay" value = {this.state.pay} onChange = {this.handleChange} onClick={this.onClick} />
+                </div>
 
 
 
@@ -433,7 +443,7 @@ class App extends Component {
           \this sat
 
           <div>
-          $flowers remaining {this.state.flowersleft}
+          flowers remaining ${this.state.flowersleft}
           </div>
 
           <Form/>
@@ -447,7 +457,7 @@ class App extends Component {
 
 
 
-          display image while submitting
+          [display image while submitting]
           <img src={img1} alt="" width="166"/>
           ...
 

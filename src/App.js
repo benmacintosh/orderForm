@@ -2,6 +2,7 @@ import React,{ Component} from 'react';
 import ReactDOM from 'react-dom';
 import './App.css';
 import img1 from './img1.png'
+import img2 from './img222.jpg'
 import {BrowserRouter as Router, Route,Link, HashRouter, Redirect} from "react-router-dom"
 
 import YouTube from 'react-youtube';
@@ -465,6 +466,9 @@ class App extends Component {
 
           <div>
         <a href="https://www.youtube.com/watch?v=DRrj1Y5oazA" style={{color:'blue'}}>https://www.youtube.com/watch?v=DRrj1Y5oazA</a>
+        </div>
+        <div>
+        <img src={img2} alt="" width="166"/>
         </div>
 
 

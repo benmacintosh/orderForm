@@ -31,10 +31,9 @@ class Form extends Component {
             time_boolean: 0,
             latlng: {lat:-33.896358, lng:151.183868}, ///temp
             pay: "minimum $22",
-            paid: ["cash on delivery<","paypal now"],
+            paid: ["cash on delivery","paypal now"],
             paid_boolean: 0,
             originlatlng: {lat:-33.896358, lng:151.183868},
-            submitting_boolean: 0,
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -46,6 +45,7 @@ class Form extends Component {
         this.onClickSubmit = this.onClickSubmit.bind(this);
         this.handleAddressChange=this.handleAddressChange.bind(this);
         this.handleTimeChange = this.handleTimeChange.bind(this);
+        this.secondsdiff24hrstring=this.secondsdiff24hrstring.bind(this);
     }
 
     componentDidMount(){
@@ -73,9 +73,9 @@ class Form extends Component {
         console.log(time>max)
         if(time>max){
             console.log("big")
-            this.setState({time:"13:00"})
+            this.setState({time:"13:00",time_boolean:1})
         }if(time<min){
-            this.setState({time:"10:00"})
+            this.setState({time:"10:00",time_boolean: 1})
         }if(time<max && time > min){
         this.setState({time:event.target.value, time_boolean: 1})
     }
@@ -95,13 +95,13 @@ class Form extends Component {
             ].join(' ');
 
             console.log("ass")
-            latlng = [place.geometry.location.lat(),place.geometry.location.lng()]
+            latlng = {lat: place.geometry.location.lat(),lng: place.geometry.location.lng()}
             that.setState({latlng: latlng})
             if(that.getDistance(latlng,that.state.originlatlng)>5000){
                 that.setState({address: "must be less than 5km from Newtown", accept: 0})
             }
             else{
-                that.setState({address_boolean: 1})
+                that.setState({address: address, address_boolean: 1})
             }
         })
         
@@ -109,7 +109,7 @@ class Form extends Component {
 
     onClickAuto1(event){
         this.setState({paid:["cash on delivery","paypal now"]})
-        this.setState({paid:this.state.paid[0]})
+        this.setState({paid:this.state.paid[0],paid_boolean: 1})
         this.setState({paid:["cash on delivery<","paypal now"]})
 
     }
@@ -135,19 +135,24 @@ class Form extends Component {
       return d; // returns the distance in meter
     };
 
+    secondsdiff24hrstring(s1,s2){
+        var hr1 = s1.substring(0,2)
+        var m1 = s1.substring(3,5)
+        var hr2 = s2.substring(0,2)
+        var m2 = s2.substring(3,5)
+
+        return 60*60*(Math.abs((hr1-hr2))*60+Math.abs((m1-m2)))*60
+    }
+
 
     onClickSubmit(event){
                 //PERFORM CHECKS
         console.log("submitted")
-        this.setState({submitting_boolean: 1})
 
 
-
+        //BUG WHEN REPLACING,, THE TO-BE-REPLACED OBJECT IS STILL EXISTING
 
         //var db = this.state.current_server;
-
-
-
 
         db.ref().once('value', data => { 
             //GET ORIGINS
@@ -159,6 +164,7 @@ class Form extends Component {
             for(var i=0; i<dbvals.length;i++){
             origins.push(dbvals[i].data.latlng)
             }
+
 
             //nearest current server point in space
             var mindistance = Infinity;
@@ -213,12 +219,13 @@ class Form extends Component {
             //check this time is than difference between timedue of both points
             console.log("timed,  timetoeach")
             console.log(time_to_reach_new_point_from_nearest)
-            var timediff_closest_andnewpoint = Math.abs((dbvals[mindex].data.time)-(that.state.time))
+            var timediff_closest_andnewpoint = that.secondsdiff24hrstring(that.state.time,dbvals[mindex].data.time)
+            console.log(timediff_closest_andnewpoint)
             if(timediff_closest_andnewpoint<time_to_reach_new_point_from_nearest){
-                that.setState({time_boolean: 1})
-            }else{
                 that.setState({time_boolean: 0})
                 alert('cant fit in delivery schedule, try another time')
+            }else{
+                that.setState({time_boolean: 1})
             }
 
 
@@ -232,9 +239,10 @@ class Form extends Component {
             if(that.state.address_boolean && that.state.number_boolean && that.state.time_boolean && that.state.paid_boolean){
                 db.ref(that.state.number).update({
                     data:that.state
-                });          
+                });   
+                alert('submit successful')       
             }else{
-                alert('couldnt submit, some values incorrect')
+                alert('couldnt submit, some values incorrect/incomplete')
             }
 
 
@@ -244,34 +252,16 @@ class Form extends Component {
             },1100)
    
         })
-
-        // db.orderByKey().limitToFirst(1).once('value', snapshot=> {
-        //     snapshot.forEach(singlesnap =>{
-
-        //         console.log(singlesnap)
-        //         thiskey = singlesnap.key
-        //         thisval = singlesnap.val()
-
-        //         db.child(thiskey).remove()
-
-        //         console.log("thisval")
-        //         console.log(thisval)
-        //         that.setState({downloadlink:thisval})
-        //     })
-        // });
-
     }
     onClick(event){
         this.setState({[event.target.name]: ""})
     }
 
     render(){
-
         let client = {
             sandbox:    'AXjFV2K0-DX4liEvACG08YvR-CvrVuMpz1KmfskCHIhQ2R4qhs7_pMErMsIbHshwC0pca76su9vqUr0N', // from https://developer.paypal.com/developer/applications/
             production: process.env.REACT_APP_paypalkey  // from https://developer.paypal.com/developer/applications/
         };
-
         let style = {
             layout: 'horizontal',  // horizontal | vertical
             size:   'small',    // medium | large | responsive
@@ -279,10 +269,6 @@ class Form extends Component {
             color:  'blue',       // gold | blue | silver | black
             tagline: 'false',
         };
-
-        // pass payment details
-
-
         let payment = (data,actions) => {
             return actions.payment.create({
                 transactions: [
@@ -298,21 +284,11 @@ class Form extends Component {
 
 
         var that = this
-        console.log(that.state)
-
         let onAuthorize = (data, actions) => {
             return actions.payment.execute().then(function(response) {
                 console.log('The payment was completed!');
-
                 that.setState({paid: ["cash on delivery","paypal ACCEPTED<"],paid_boolean: 1})
-
-
             });
-
-
-
-
-            //REACT ROUTER REDIRECT TO 1 OF RANDOM DOWNLOAD LINKS
         };
         
         let PayPalButton = window.paypal.Button.driver('react', { React, ReactDOM });
@@ -354,11 +330,11 @@ class Form extends Component {
                 <div>
                 <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "pay" value = {this.state.pay} onChange = {this.handleChange} onClick={this.onClick} />
                 </div>
-
+                <div>
                 <a onClick={this.onClickAuto1} style={{color:'blue', cursor: 'pointer', textDecorationLine: 'underline'}}>{this.state.paid[0]}</a>
                 <a>, </a>
                 <a onClick={this.onClickAuto2} style={{color:'blue', cursor: 'pointer', textDecorationLine: 'underline'}}>{this.state.paid[1]}</a>
-
+                </div>
 
 
                 <PayPalButton
@@ -398,8 +374,11 @@ class Form extends Component {
                 <div>
                 <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "pay" value = {this.state.pay} onChange = {this.handleChange} onClick={this.onClick} />
                 </div>
-
-
+                <div>
+                <a onClick={this.onClickAuto1} style={{color:'blue', cursor: 'pointer', textDecorationLine: 'underline'}}>{this.state.paid[0]}</a>
+                <a>, </a>
+                <a onClick={this.onClickAuto2} style={{color:'blue', cursor: 'pointer', textDecorationLine: 'underline'}}>{this.state.paid[1]}</a>
+                </div>
 
 
 
@@ -458,7 +437,6 @@ class App extends Component {
 
 
 
-          [display image while submitting]
           <img src={img1} alt="" width="166"/>
           ...
 

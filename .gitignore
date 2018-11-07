@@ -2,6 +2,7 @@
 
 .env
 /src/confid/dev.js
+/orderFormBackend/key.py
 
 # dependencies
 /node_modules

@@ -1,8 +1,13 @@
 # pip install python-firebase, requests==1.1.0, (need python 3.6, conda activate py3.6 form e), flask
 from firebase import firebase
-from key import key
+from key import key,gmailpass
 import googlemaps
 from datetime import datetime
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 
 
 addresses = []
@@ -69,7 +74,7 @@ for numberi in range(len(addresses)):
 
 
 #get set partitions of at ost size
-k=2
+k=4
 
 # too partition n, from n-1, just add nth element into an existing subset or add it as new subset
 print(adjmatrix)
@@ -156,7 +161,8 @@ print(partitions[mindex])
 
 # backup/create file
 # date
-file = open(datetime.now().strftime("%Y%m%d%H%M%S")+".html","w")
+filename = datetime.now().strftime("%Y%m%d%H%M%S")+".html"
+file = open(filename,"w")
  
 
 # then go throug htat partition and write correcpsonding file,, and google maps grouped markers
@@ -178,9 +184,50 @@ for subset in partitions[mindex]:
 file.close() 
 
 
+
+
 # delelete all
 # firebase.delete('', None)
 # leave if note says permanent then leave
+
+
+
+
+# send email
+user = "ben.macintosh0@gmail.com"
+tos = 'ben.macintosh0@gmail.com'
+# 'miles.thorn8@gmail.com','fabian.caley@gmail.com',
+
+
+msg = MIMEMultipart()
+msg['From'] = user
+msg['To'] = tos
+msg['Subject'] = "fleurs orders"+datetime.now().strftime("%Y,%m,%d,,%H:%M:%S")
+
+attachment = open(filename,"rb")
+part = MIMEBase('application','octet-stream')
+part.set_payload((attachment).read())
+encoders.encode_base64(part)
+part.add_header('Content-Disposition', "attachment; filename= "+filename)
+msg.attach(part)
+
+text = msg.as_string()
+server=smtplib.SMTP('smtp.gmail.com',587)
+server.starttls()
+server.login(user,gmailpass)
+server.sendmail(user,['ben.macintosh0@gmail.com'],text)
+server.quit()
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -17,6 +17,9 @@ import {withRouter} from 'react-router-dom'
 const db = firebase.initializeApp(FirebaseConfig).database()
 
 
+
+
+
 class Form extends Component {
 
     constructor(props) {
@@ -24,16 +27,16 @@ class Form extends Component {
         this.state = {
             number: "phone number (will replace existing order)",
             number_boolean: 0,
-            notes: "notes",
-            address: "enter address, (within ~5km of Newtown)",
+            notes: "name and notes",
+            address: "enter address, (within ~4km of Leichhardt)",
             address_boolean: 0,
             time: "",
             time_boolean: 0,
-            latlng: {lat:-33.896358, lng:151.183868}, ///temp
-            pay: "minimum $22",
-            paid: ["cash on delivery","paypal now"],
-            paid_boolean: 0,
-            originlatlng: {lat:-33.896358, lng:151.183868},
+            latlng: {lat:-33.885903,lng: 151.146844}, ///temp
+            pay: "minimum $22, $44 for more full",
+            paid: ["cash on delivery<","paypal now"],
+            paid_boolean: 1,
+            originlatlng: {lat:-33.885903,lng: 151.146844},
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -46,6 +49,7 @@ class Form extends Component {
         this.handleAddressChange=this.handleAddressChange.bind(this);
         this.handleTimeChange = this.handleTimeChange.bind(this);
         this.secondsdiff24hrstring=this.secondsdiff24hrstring.bind(this);
+        this.handlePayChange = this.handlePayChange.bind(this);
     }
 
     componentDidMount(){
@@ -62,6 +66,15 @@ class Form extends Component {
 
     handleNumberChange(event){
         this.setState({[event.target.name]:event.target.value, address_boolean: 1})
+    }
+
+    handlePayChange(event){
+        var input = event.target.value
+        if(input >>> 0 === parseFloat(input)){
+            this.setState({[event.target.name]: input});          
+        }else{
+            alert("input integer")
+        }
     }
 
     handleTimeChange(event){
@@ -98,6 +111,11 @@ class Form extends Component {
             latlng = {lat: place.geometry.location.lat(),lng: place.geometry.location.lng()}
             that.setState({latlng: latlng})
             if(that.getDistance(latlng,that.state.originlatlng)>5000){
+
+                // INCREASE WIDTH,, INCL ON MEETINGPOINTAPP, AND CHAGNE TEXT AS "APPROXIAMTE" ALGORTIHM
+                // AUTOMATE PROCESS INCL, SEND TO PEOPLE EMAIL
+
+            // ONLY BOOLEAN IF GET A LATLNG CHANGES
                 that.setState({address: "must be less than 5km from Newtown", accept: 0})
             }
             else{
@@ -109,13 +127,13 @@ class Form extends Component {
 
     onClickAuto1(event){
         this.setState({paid:["cash on delivery","paypal now"]})
-        this.setState({paid:this.state.paid[0],paid_boolean: 1})
+        this.setState({paid:this.state.paid[0]})
         this.setState({paid:["cash on delivery<","paypal now"]})
 
     }
     onClickAuto2(event){
         this.setState({paid:["cash on delivery","paypal now"]})
-        this.setState({paid:this.state.paid[1]})
+        this.setState({paid:this.state.paid[1],paid_boolean: 0})
         this.setState({paid:["cash on delivery","paypal now<"]})
 
     }
@@ -315,20 +333,20 @@ class Form extends Component {
                 <div>
 
                 <div>
-                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "number" value = {this.state.number} onChange = {this.handleNumberChange} onClick={this.onClick} />
+                <input style = {{fontFamily:'times-new-roman', color: 'grey', width: (this.state.number.length+1)*7}} type = "text" name = "number" value = {this.state.number} onChange = {this.handleNumberChange} onClick={this.onClick} />
                 </div>
                 <div>
-                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "notes" value = {this.state.notes} onChange = {this.handleChange} onClick={this.onClick} />
+                <input style = {{fontFamily:'times-new-roman', color: 'grey', width: (this.state.notes.length+1)*7}} type = "text" name = "notes" value = {this.state.notes} onChange = {this.handleChange} onClick={this.onClick} />
                 </div>
                 <div>
-                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" id={66} name = "address" value = {this.state.address} onChange = {this.handleAddressChange} onClick={this.onClick} />
+                <input style = {{fontFamily:'times-new-roman', color: 'grey', width: 233    }} type = "text" id={66} name = "address" value = {this.state.address} onChange = {this.handleAddressChange} onClick={this.onClick} />
                 </div>
                 <div>
                 <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "time" value = {this.state.time} onChange = {this.handleTimeChange} />
-                deliver by (between 10-1, subject to schedule availability)
+                deliver by (between 10-1, subject to availability)
                 </div>
                 <div>
-                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "pay" value = {this.state.pay} onChange = {this.handleChange} onClick={this.onClick} />
+                <input style = {{fontFamily:'times-new-roman', color: 'grey', width: (this.state.pay.length+1)*7}} type = "text" name = "pay" value = {this.state.pay} onChange = {this.handleChange} onClick={this.onClick} />
                 </div>
                 <div>
                 <a onClick={this.onClickAuto1} style={{color:'blue', cursor: 'pointer', textDecorationLine: 'underline'}}>{this.state.paid[0]}</a>
@@ -359,20 +377,20 @@ class Form extends Component {
                 <div>
 
                 <div>
-                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "number" value = {this.state.number} onChange = {this.handleNumberChange} onClick={this.onClick} />
+                <input style = {{fontFamily:'times-new-roman', color: 'grey', width: (this.state.number.length+1)*7}} type = "text" name = "number" value = {this.state.number} onChange = {this.handleNumberChange} onClick={this.onClick} />
                 </div>
                 <div>
-                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "notes" value = {this.state.notes} onChange = {this.handleChange} onClick={this.onClick} />
+                <input style = {{fontFamily:'times-new-roman', color: 'grey', width: (this.state.notes.length+1)*7}} type = "text" name = "notes" value = {this.state.notes} onChange = {this.handleChange} onClick={this.onClick} />
                 </div>
                 <div>
-                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" id={66} name = "address" value = {this.state.address} onChange = {this.handleAddressChange} onClick={this.onClick} />
+                <input style = {{fontFamily:'times-new-roman', color: 'grey', width: 233    }} type = "text" id={66} name = "address" value = {this.state.address} onChange = {this.handleAddressChange} onClick={this.onClick} />
                 </div>
                 <div>
                 <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "time" value = {this.state.time} onChange = {this.handleTimeChange} />
-                deliver by (between 10-1, subject to schedule availability)
+                deliver by (between 10-1, subject to availability)
                 </div>
                 <div>
-                <input style = {{fontFamily:'times-new-roman', color: 'grey'}} type = "text" name = "pay" value = {this.state.pay} onChange = {this.handleChange} onClick={this.onClick} />
+                <input style = {{fontFamily:'times-new-roman', color: 'grey', width: (this.state.pay.length+1)*7}} type = "text" name = "pay" value = {this.state.pay} onChange = {this.handlePayChange} onClick={this.onClick} />
                 </div>
                 <div>
                 <a onClick={this.onClickAuto1} style={{color:'blue', cursor: 'pointer', textDecorationLine: 'underline'}}>{this.state.paid[0]}</a>
@@ -398,7 +416,7 @@ class Form extends Component {
 class App extends Component {
     constructor(props){
         super(props);
-        this.state={flowersleft:0,flowerfloatvalue:1500}
+        this.state={flowersleft:0,flowerfloatvalue:311}
     }
     componentDidMount(props){
         
@@ -437,7 +455,7 @@ class App extends Component {
 
 
 
-          <img src={img1} alt="" width="166"/>
+          <img src={img1} alt="" width="66"/>
           ...
 
 
